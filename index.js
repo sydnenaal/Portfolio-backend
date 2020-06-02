@@ -51,16 +51,17 @@ app.get("/message", async (_, res) => {
   const messages = app.locals.db.collection("messages");
   await messages.findOne({}, { _id: id }).then(responseCallback);
 });
+
 app.get("/visits", async (_, res) => {
   const responseCallback = (error, visits) => {
     if (error) console.log(error);
     const response = JSON.stringify(visits);
 
-    res.send(response);
+    setTimeout(() => res.send(response), 3000);
   };
 
-  const messages = app.locals.db.collection("visits");
-  await messages.find({}).toArray(responseCallback);
+  const visits = app.locals.db.collection("visits");
+  await visits.find({}).toArray(responseCallback);
 });
 
 app.get("/newMessages", async (_, res) => {
@@ -98,6 +99,24 @@ app.get("/projects", async (_, res) => {
 
   const messages = app.locals.db.collection("projects");
   await messages.find({}).toArray(responseCallback);
+});
+
+app.get("/", async (_, res) => {
+  const visits = app.locals.db.collection("visits");
+  await visits.find({}).toArray((error, data) => {
+    console.log(data);
+    const { _id, day, week, month } = data[0];
+    visits.updateOne(
+      { _id: _id },
+      {
+        $set: {
+          day: day + 1,
+          week: week + 1,
+          month: month + 1,
+        },
+      }
+    );
+  });
 });
 
 app.get("/*", (_, res) => {
