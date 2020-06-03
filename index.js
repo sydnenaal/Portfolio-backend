@@ -32,14 +32,18 @@ mongoClient.connect((err, client) => {
 app.use(express.static(path.join(__dirname, "build")));
 app.use(cors());
 
-app.post("/auth", urlencodedParser, async (_, res) => {
-  const users = app.locals.db.collection("users");
-  const user = await users.findOne({}, { userName: "Admin", password: "1" });
-
-  console.log(user.userName);
+app.post("/auth", urlencodedParser, async (req, res) => {
+  try {
+    console.log(req.body);
+    const usersCollection = app.locals.db.collection("users");
+    const user = await users.findOne({}, { userName: "Admin", password: "1" });
+    console.log(user.userName);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-app.get("/message", async (_, res) => {
+/*app.get("/message", async (_, res) => {
   const id = 0;
   const responseCallback = (error, message) => {
     if (error) console.log(error);
@@ -50,63 +54,60 @@ app.get("/message", async (_, res) => {
 
   const messages = app.locals.db.collection("messages");
   await messages.findOne({}, { _id: id }).then(responseCallback);
-});
+});*/
 
-app.get("/visits", async (_, res) => {
-  const responseCallback = (error, visits) => {
-    if (error) console.log(error);
-    const response = JSON.stringify(visits);
+app.get("/mainPageInfo", async (_, res) => {
+  try {
+    const visitsCollection = app.locals.db.collection("visits");
+    const messagesCollection = app.locals.db.collection("messages");
 
-    setTimeout(() => res.send(response), 3000);
-  };
+    const visits = await visitsCollection.findOne({});
+    const messages = await messagesCollection.countDocuments();
 
-  const visits = app.locals.db.collection("visits");
-  await visits.find({}).toArray(responseCallback);
-});
+    const response = JSON.stringify({
+      visits: visits,
+      counter: messages,
+    });
 
-app.get("/newMessages", async (_, res) => {
-  const responseCallback = (error, messages) => {
-    if (error) console.log(error);
-    const counter = messages.filter((item) => item.isRead).length;
-    const response = JSON.stringify(counter);
-
-    res.send({ counter: response });
-  };
-
-  const messages = app.locals.db.collection("messages");
-  await messages.find({}).toArray(responseCallback);
+    res.send(response);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 app.get("/messages", async (_, res) => {
-  const responseCallback = (error, messages) => {
-    if (error) console.log(error);
+  try {
+    const messagesCollection = app.locals.db.collection("messages");
+    const messages = await messagesCollection.find({}).toArray();
+
     const response = JSON.stringify(messages);
 
     res.send(response);
-  };
-
-  const messages = app.locals.db.collection("messages");
-  await messages.find({}).toArray(responseCallback);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 app.get("/projects", async (_, res) => {
-  const responseCallback = (error, projects) => {
-    if (error) console.log(error);
+  try {
+    const projectsCollection = app.locals.db.collection("projects");
+    const projects = await projectsCollection.find({}).toArray();
+
     const response = JSON.stringify(projects);
 
     res.send(response);
-  };
-
-  const messages = app.locals.db.collection("projects");
-  await messages.find({}).toArray(responseCallback);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
-app.get("/", async (_, res) => {
-  const visits = app.locals.db.collection("visits");
-  await visits.find({}).toArray((error, data) => {
-    console.log(data);
-    const { _id, day, week, month } = data[0];
-    visits.updateOne(
+app.get("/*", async (_, res) => {
+  try {
+    const visitsCollection = app.locals.db.collection("visits");
+    const visits = await visitsCollection.findOne({});
+
+    const { _id, day, week, month } = visits;
+    await visitsCollection.updateOne(
       { _id: _id },
       {
         $set: {
@@ -116,9 +117,9 @@ app.get("/", async (_, res) => {
         },
       }
     );
-  });
-});
 
-app.get("/*", (_, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+  } catch (error) {
+    console.error(error);
+  }
 });
