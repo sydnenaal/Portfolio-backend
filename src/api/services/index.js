@@ -1,14 +1,13 @@
-const { messagesService, messageService } = require("./messages");
-const { projectsService } = require("./projects");
-const { authService } = require("./auth");
-const { mainPageInfoService } = require("./mainPage");
-const { passwordChangeService } = require("./users");
+const messages = require("./messages");
+const projects = require("./projects");
+const auth = require("./auth");
+const mainPage = require("./mainPage");
+const users = require("./users");
 
 module.exports = {
-  messagesService,
-  projectsService,
-  authService,
-  mainPageInfoService,
-  messageService,
-  passwordChangeService,
+  ...messages,
+  ...projects,
+  ...auth,
+  ...mainPage,
+  ...users,
 };

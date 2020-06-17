@@ -1,5 +1,7 @@
 const CryptoJS = require("crypto-js");
 
+const selectors = require("./selectors");
+
 const logger = (req, res, next) => {
   console.log(req.headers);
   next();
@@ -24,7 +26,7 @@ const restHandlerWrapper = (arguments) => async (req, res) => {
         return null;
     }
 
-    if ((checkToken && req.headers.token) || !checkToken) {
+    if ((checkToken && req.headers.authtoken) || !checkToken) {
       await callback(req, res);
     } else {
       //send unauthorized status
@@ -47,4 +49,9 @@ const decryptDataHandler = (data) => {
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
-module.exports = { restHandlerWrapper, decryptDataHandler, logger };
+module.exports = {
+  restHandlerWrapper,
+  decryptDataHandler,
+  logger,
+  ...selectors,
+};

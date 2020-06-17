@@ -12,6 +12,8 @@ const {
   mainPageInfoService,
   messageService,
   passwordChangeService,
+  setPriorityService,
+  setActualityService,
 } = require("./services");
 
 const parser = bodyParser.urlencoded({ extended: true });
@@ -26,16 +28,23 @@ apiServer.use(morgan(":method :url :status :response-time ms"));
 const startApiServer = ({ port }) => {
   mongoClient.connect((err, client) => {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
       const db = client.db("portfolio");
 
+      // Auth
       apiServer.post("/auth", parser, authService(db));
-      apiServer.post("/message", parser, messageService(db));
-      apiServer.post("/setPassword", parser, passwordChangeService(db));
-      apiServer.get("/projects", projectsService(db));
+      // Messages
       apiServer.get("/messages", messagesService(db));
-      apiServer.get("/mainPageInfo", mainPageInfoService(db));
+      apiServer.post("/messages/message", parser, messageService(db));
+      apiServer.post("/messages/priority", parser, setPriorityService(db));
+      apiServer.post("/messages/actuality", parser, setActualityService(db));
+      // Users
+      apiServer.post("/users/setPassword", parser, passwordChangeService(db));
+      // Projects
+      apiServer.get("/projects", projectsService(db));
+      // MainPage
+      apiServer.get("/mainPage/info", mainPageInfoService(db));
 
       apiServer.listen(port, () => {
         console.info(`Интерфейсы доступны на порту ${port}`);
