@@ -13,7 +13,13 @@ const authService = (database) =>
       });
 
       user
-        ? res.send(JSON.stringify({ token: user._id }))
+        ? res.send(
+            JSON.stringify({
+              token: user._id,
+              name: user.name,
+              photo: user.photo,
+            })
+          )
         : res.sendStatus("500");
     },
   });

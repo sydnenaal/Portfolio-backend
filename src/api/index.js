@@ -14,6 +14,7 @@ const {
   passwordChangeService,
   setPriorityService,
   setActualityService,
+  userDataService,
 } = require("./services");
 
 const parser = bodyParser.urlencoded({ extended: true });
@@ -41,6 +42,7 @@ const startApiServer = ({ port }) => {
       apiServer.post("/messages/actuality", parser, setActualityService(db));
       // Users
       apiServer.post("/users/setPassword", parser, passwordChangeService(db));
+      apiServer.get("/users/getUserData", userDataService(db));
       // Projects
       apiServer.get("/projects", projectsService(db));
       // MainPage

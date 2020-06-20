@@ -6,6 +6,24 @@ const {
   authTokenSelector,
 } = require("../../utils");
 
+const userDataService = (database) =>
+  restHandlerWrapper(async (req, res) => {
+    const _id = authTokenSelector(req);
+    const ObjectId = Mongo.ObjectID;
+
+    const usersCollection = database.collection("users");
+    const user = await usersCollection.findOne({
+      _id: ObjectId(_id),
+    });
+
+    res.send(
+      JSON.stringify({
+        name: user.name,
+        photo: user.photo,
+      })
+    );
+  });
+
 const passwordChangeService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const { password, oldPassword } = req.body.data;
@@ -19,7 +37,7 @@ const passwordChangeService = (database) =>
       _id: ObjectId(_id),
     });
 
-    if (actualPassword && user.password === decryptedOldPassword) {
+    if (user.password === decryptedOldPassword) {
       await usersCollection.updateOne(
         { _id: ObjectId(_id) },
         { $set: { password: decryptedPassword } }
@@ -33,4 +51,5 @@ const passwordChangeService = (database) =>
 
 module.exports = {
   passwordChangeService,
+  userDataService,
 };
