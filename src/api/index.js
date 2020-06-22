@@ -29,11 +29,11 @@ apiServer.use(bodyParser.json());
 apiServer.use(morgan(":method :url :status :response-time ms"));
 
 const startApiServer = ({ port }) => {
+  console.log("Подключение к базе данных...");
   mongoClient.connect((err, client) => {
     if (err) {
       console.error(err);
     } else {
-      console.log("Подключение к базе данных...");
       const db = client.db("portfolio");
 
       // Auth
