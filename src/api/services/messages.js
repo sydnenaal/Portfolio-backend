@@ -1,15 +1,14 @@
 const { restHandlerWrapper } = require("../../utils");
-const Mongo = require("mongodb");
+const { ObjectID } = require("mongodb");
 
 const setActualityService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const { messages, action } = req.body;
-    const ObjectId = Mongo.ObjectID;
 
     const messagesCollection = database.collection("messages");
     await messages.forEach(async (item) => {
       await messagesCollection.updateOne(
-        { _id: ObjectId(item) },
+        { _id: ObjectID(item) },
         { $set: { isDeleted: action } }
       );
     });
@@ -23,12 +22,11 @@ const setActualityService = (database) =>
 const setPriorityService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const { messages, action } = req.body;
-    const ObjectId = Mongo.ObjectID;
 
     const messagesCollection = database.collection("messages");
     await messages.forEach(async (item) => {
       await messagesCollection.updateOne(
-        { _id: ObjectId(item) },
+        { _id: ObjectID(item) },
         { $set: { isImportant: action } }
       );
     });
@@ -42,11 +40,10 @@ const setPriorityService = (database) =>
 const messageService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const id = req.body._id;
-    const ObjectId = Mongo.ObjectID;
 
     const messagesCollection = database.collection("messages");
     const message = await messagesCollection.findOneAndUpdate(
-      { _id: ObjectId(id) },
+      { _id: ObjectID(id) },
       { $set: { isRead: true } }
     );
 

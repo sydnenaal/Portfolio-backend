@@ -4,7 +4,7 @@ const cors = require("cors");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 
-const { DATABASE_URL, DATABASE_CONFIG } = require("../constants");
+const { DATABASE_REMOTE_URL, DATABASE_CONFIG } = require("../constants");
 const {
   messagesService,
   projectsService,
@@ -15,12 +15,14 @@ const {
   setPriorityService,
   setActualityService,
   userDataService,
+  deleteProjectService,
+  createProjectService,
 } = require("./services");
 
 const parser = bodyParser.urlencoded({ extended: true });
 const apiServer = express();
 const MongoClient = Mongo.MongoClient;
-const mongoClient = new MongoClient(DATABASE_URL, DATABASE_CONFIG);
+const mongoClient = new MongoClient(DATABASE_REMOTE_URL, DATABASE_CONFIG);
 
 apiServer.use(cors());
 apiServer.use(bodyParser.json());
@@ -31,6 +33,7 @@ const startApiServer = ({ port }) => {
     if (err) {
       console.error(err);
     } else {
+      console.log("Подключение к базе данных...");
       const db = client.db("portfolio");
 
       // Auth
@@ -45,6 +48,8 @@ const startApiServer = ({ port }) => {
       apiServer.get("/users/getUserData", userDataService(db));
       // Projects
       apiServer.get("/projects", projectsService(db));
+      apiServer.delete("/projects/delete", parser, deleteProjectService(db));
+      apiServer.put("/projects/insert", parser, createProjectService(db));
       // MainPage
       apiServer.get("/mainPage/info", mainPageInfoService(db));
 
