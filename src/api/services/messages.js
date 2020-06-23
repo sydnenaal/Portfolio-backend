@@ -6,14 +6,13 @@ const setActualityService = (database) =>
     const { messages, action } = req.body;
 
     const messagesCollection = database.collection("messages");
-    await messages.forEach(async (item) => {
+    for (const item in messages) {
       await messagesCollection.updateOne(
         { _id: ObjectID(item) },
         { $set: { isDeleted: action } }
       );
-    });
+    }
     const newMessages = await messagesCollection.find({}).toArray();
-
     const response = JSON.stringify(newMessages);
 
     res.send(response);
@@ -24,14 +23,13 @@ const setPriorityService = (database) =>
     const { messages, action } = req.body;
 
     const messagesCollection = database.collection("messages");
-    await messages.forEach(async (item) => {
+    for (const item of messages) {
       await messagesCollection.updateOne(
         { _id: ObjectID(item) },
         { $set: { isImportant: action } }
       );
-    });
+    }
     const newMessages = await messagesCollection.find({}).toArray();
-
     const response = JSON.stringify(newMessages);
 
     res.send(response);
@@ -46,7 +44,6 @@ const messageService = (database) =>
       { _id: ObjectID(id) },
       { $set: { isRead: true } }
     );
-
     const response = JSON.stringify(message.value);
 
     res.send(response);

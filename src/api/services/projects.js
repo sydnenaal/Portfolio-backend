@@ -5,9 +5,9 @@ const deleteProjectService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const ids = req.body.data;
     const projectsCollection = database.collection("projects");
-    await ids.forEach(async (item) => {
+    for (const item in ids) {
       await projectsCollection.deleteOne({ _id: ObjectID(item) });
-    });
+    }
     const projects = await projectsCollection.find({}).toArray();
     const response = JSON.stringify(projects);
 
