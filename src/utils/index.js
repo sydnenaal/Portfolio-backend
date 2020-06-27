@@ -1,6 +1,6 @@
 const CryptoJS = require("crypto-js");
 
-const selectors = require("./selectors");
+const selectors = require("@utils/selectors");
 
 const logger = (req, res, next) => {
   console.log(req.headers);

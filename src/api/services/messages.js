@@ -1,4 +1,4 @@
-const { restHandlerWrapper } = require("../../utils");
+const { restHandlerWrapper } = require("@utils");
 const { ObjectID } = require("mongodb");
 
 const setActualityService = (database) =>
@@ -23,12 +23,10 @@ const setPriorityService = (database) =>
     const { messages, action } = req.body;
 
     const messagesCollection = database.collection("messages");
-    for (const item of messages) {
-      await messagesCollection.updateOne(
-        { _id: ObjectID(item) },
-        { $set: { isImportant: action } }
-      );
-    }
+    await messagesCollection.update(
+      { _id: { $in: messages.map((item) => ObjectID(item)) } },
+      { $set: { isImportant: action } }
+    );
     const newMessages = await messagesCollection.find({}).toArray();
     const response = JSON.stringify(newMessages);
 

@@ -1,4 +1,4 @@
-const { restHandlerWrapper } = require("../../utils");
+const { restHandlerWrapper } = require("@utils");
 
 const mainPageInfoService = (database) =>
   restHandlerWrapper(async (_, res) => {

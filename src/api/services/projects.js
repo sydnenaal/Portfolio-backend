@@ -1,13 +1,13 @@
-const { restHandlerWrapper } = require("../../utils");
+const { restHandlerWrapper } = require("@utils");
 const { ObjectID } = require("mongodb");
 
 const deleteProjectService = (database) =>
   restHandlerWrapper(async (req, res) => {
     const ids = req.body.data;
     const projectsCollection = database.collection("projects");
-    for (const item in ids) {
-      await projectsCollection.deleteOne({ _id: ObjectID(item) });
-    }
+    await projectsCollection.delete({
+      _id: { $in: ids.map((item) => ObjectID(item)) },
+    });
     const projects = await projectsCollection.find({}).toArray();
     const response = JSON.stringify(projects);
 

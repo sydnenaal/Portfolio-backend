@@ -1,21 +1,21 @@
-const STATIC_SERVER_PORT = 3000;
-const API_SERVER_PORT = 9000;
+const ROUTES = require("./routes");
 
+const PORT = process.env.PORT;
 const STATIC_PATH = __dirname + "/../../build";
-
-const DATABASE_REMOTE_URL =
-  "mongodb+srv://derohin:administrator@cluster0-t0s2a.mongodb.net/test?retryWrites=true&w=majority";
-const DATABASE_LOCAL_URL = "mongodb://localhost:27017/";
+const DATABASE_LOCAL_URI = process.env.DATABASE_LOCAL_URI;
+const DATABASE_REMOTE_URI = process.env.DATABASE_REMOTE_URI;
+const APP_MODE = process.env.NODE_ENV;
 const DATABASE_CONFIG = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };
 
 module.exports = {
+  ROUTES,
   STATIC_PATH,
-  STATIC_SERVER_PORT,
-  API_SERVER_PORT,
-  DATABASE_REMOTE_URL,
-  DATABASE_LOCAL_URL,
+  PORT,
+  DATABASE_LOCAL_URI,
+  DATABASE_REMOTE_URI,
+  APP_MODE,
   DATABASE_CONFIG,
 };

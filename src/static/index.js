@@ -1,20 +1,14 @@
 const express = require("express");
-const cors = require("cors");
 
 const { staticService } = require("./services");
-const { STATIC_PATH } = require("../constants");
+const { ROUTES } = require("../constants");
 
-const staticServer = express();
+const setStaticRoutes = () => {
+  const router = express.Router();
 
-staticServer.use(express.static(STATIC_PATH));
-staticServer.use(cors());
+  router.get(ROUTES.STATIC, staticService);
 
-staticServer.get("/*", staticService);
-
-const startStaticServer = ({ port }) => {
-  staticServer.listen(port, () => {
-    console.log(`Статика доступна на порту ${port}`);
-  });
+  return router;
 };
 
-module.exports = { startStaticServer };
+module.exports = { setStaticRoutes };

@@ -4,7 +4,7 @@ const {
   decryptDataHandler,
   restHandlerWrapper,
   authTokenSelector,
-} = require("../../utils");
+} = require("@utils");
 
 const userDataService = (database) =>
   restHandlerWrapper(async (req, res) => {
@@ -16,12 +16,13 @@ const userDataService = (database) =>
       _id: ObjectId(_id),
     });
 
-    res.send(
-      JSON.stringify({
-        name: user.name,
-        photo: user.photo,
-      })
-    );
+    user &&
+      res.send(
+        JSON.stringify({
+          name: user.name,
+          photo: user.photo,
+        })
+      );
   });
 
 const passwordChangeService = (database) =>

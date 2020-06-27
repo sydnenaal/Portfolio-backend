@@ -1,4 +1,4 @@
-const { decryptDataHandler, restHandlerWrapper } = require("../../utils");
+const { decryptDataHandler, restHandlerWrapper } = require("@utils");
 
 const authService = (database) =>
   restHandlerWrapper({

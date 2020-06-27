@@ -1,68 +1,60 @@
-const express = require("express");
 const Mongo = require("mongodb");
-const cors = require("cors");
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
+const express = require("express");
 
-const { DATABASE_REMOTE_URL, DATABASE_CONFIG } = require("../constants");
 const {
-  messagesService,
-  projectsService,
-  authService,
-  mainPageInfoService,
-  messageService,
-  passwordChangeService,
-  setPriorityService,
-  setActualityService,
-  userDataService,
-  deleteProjectService,
-  createProjectService,
-} = require("./services");
+  DATABASE_LOCAL_URI,
+  DATABASE_REMOTE_URI,
+  APP_MODE,
+  DATABASE_CONFIG,
+  ROUTES,
+} = require("@constants");
+const Services = require("@api/services");
 
-const parser = bodyParser.urlencoded({ extended: true });
-const apiServer = express();
+const DATABASE_URL =
+  APP_MODE === "development" ? DATABASE_LOCAL_URI : DATABASE_REMOTE_URI;
+
 const MongoClient = Mongo.MongoClient;
-const mongoClient = new MongoClient(DATABASE_REMOTE_URL, DATABASE_CONFIG);
+const mongoClient = new MongoClient(DATABASE_URL, DATABASE_CONFIG);
 
-apiServer.use(cors());
-apiServer.use(bodyParser.json());
-apiServer.use(morgan(":method :url :status :response-time ms"));
+const setApiRoutes = async () => {
+  try {
+    console.log("Подключение к базе данных...");
 
-const startApiServer = ({ port }) => {
-  console.log("Подключение к базе данных...");
-  mongoClient.connect((err, client) => {
-    if (err) {
-      console.error(err);
-    } else {
-      const db = client.db("portfolio");
+    const router = express.Router();
+    const connect = await mongoClient.connect();
+    const db = connect.db("portfolio");
 
-      // Auth
-      apiServer.post("/auth", parser, authService(db));
-      // Messages
-      apiServer.get("/messages", messagesService(db));
-      apiServer.post("/messages/message", parser, messageService(db));
-      apiServer.post("/messages/priority", parser, setPriorityService(db));
-      apiServer.post("/messages/actuality", parser, setActualityService(db));
-      // Users
-      apiServer.post("/users/setPassword", parser, passwordChangeService(db));
-      apiServer.get("/users/getUserData", userDataService(db));
-      // Projects
-      apiServer.get("/projects", projectsService(db));
-      apiServer.delete("/projects/delete", parser, deleteProjectService(db));
-      apiServer.put("/projects/insert", parser, createProjectService(db));
-      // MainPage
-      apiServer.get("/mainPage/info", mainPageInfoService(db));
+    /* Auth */
+    router.post(ROUTES.AUTH, Services.authService(db));
 
-      apiServer.listen(port, () => {
-        console.info(`Интерфейсы доступны на порту ${port}`);
-      });
+    /* MainPage */
+    console.log(ROUTES.MAIN_PAGE_INFO);
+    router.get(ROUTES.MAIN_PAGE_INFO, Services.mainPageInfoService(db));
 
-      process.on("SIGINT", () => {
-        client.close();
-        process.exit();
-      });
-    }
-  });
+    /* Messages */
+    router.get(ROUTES.MESSAGES_LIST, Services.messagesService(db));
+    router.post(ROUTES.MESSAGES_MESSAGE, Services.messageService(db));
+    router.post(ROUTES.MESSAGES_PRIORITY, Services.setPriorityService(db));
+    router.post(ROUTES.MESSAGES_ACTUALITY, Services.setActualityService(db));
+
+    /* Users */
+    router.post(ROUTES.USERS_PASSWORD, Services.passwordChangeService(db));
+    router.get(ROUTES.USERS_USER, Services.userDataService(db));
+
+    /* Projects */
+    router.get(ROUTES.PROJECTS_LIST, Services.projectsService(db));
+    router.put(ROUTES.PROJECTS_CREATE, Services.createProjectService(db));
+    router.delete(ROUTES.PROJECTS_DEL, Services.deleteProjectService(db));
+
+    process.on("SIGINT", () => {
+      connect.close();
+      process.exit();
+    });
+
+    return router;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-module.exports = { startApiServer, apiServer };
+module.exports = { setApiRoutes };
