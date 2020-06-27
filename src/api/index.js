@@ -28,7 +28,6 @@ const setApiRoutes = async () => {
     router.post(ROUTES.AUTH, Services.authService(db));
 
     /* MainPage */
-    console.log(ROUTES.MAIN_PAGE_INFO);
     router.get(ROUTES.MAIN_PAGE_INFO, Services.mainPageInfoService(db));
 
     /* Messages */
