@@ -1,9 +1,9 @@
 const express = require("express");
 
 const { staticService } = require("./services");
-const { ROUTES } = require("../constants");
+const { ROUTES } = require("@constants");
 
-const setStaticRoutes = () => {
+const getStaticRouter = () => {
   const router = express.Router();
 
   router.get(ROUTES.STATIC, staticService);
@@ -11,4 +11,4 @@ const setStaticRoutes = () => {
   return router;
 };
 
-module.exports = { setStaticRoutes };
+module.exports = { getStaticRouter };

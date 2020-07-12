@@ -6,25 +6,36 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 
-const { setStaticRoutes } = require("@static");
-const { setApiRoutes } = require("@api");
-const { PORT, STATIC_PATH } = require("@constants");
+const controllers = require("@controllers");
+const { initializeDatabaseConnection } = require("@database");
+const {
+  PORT,
+  STATIC_PATH,
+  DATABASE_URI,
+  DATABASE_CONFIG,
+} = require("@constants");
 
 (async () => {
   const server = express();
 
-  const apiRouter = await setApiRoutes({ app: server });
-  const staticRouter = setStaticRoutes({ app: server });
+  const database = await initializeDatabaseConnection(
+    DATABASE_URI,
+    DATABASE_CONFIG
+  );
 
-  server.use(express.static(STATIC_PATH));
-  server.use(cors());
-  server.use(bodyParser.json());
-  server.use(morgan(":method :url :status :response-time ms"));
+  const apiRouter = controllers.getApiRouter(database);
+  const authRouter = controllers.getAuthRouter(database);
+  const staticRouter = controllers.getStaticRouter();
 
-  server.use("/api", apiRouter);
-  server.use("/", staticRouter);
-
-  server.listen(PORT, () => {
-    console.log(`Сервер доступен на порту ${PORT}`);
-  });
+  server
+    .use(express.static(STATIC_PATH))
+    .use(cors())
+    .use(bodyParser.json())
+    .use(morgan(":method :url :status :response-time ms"))
+    .use("/api", apiRouter)
+    .use("/auth", authRouter)
+    .use("/", staticRouter)
+    .listen(PORT, () => {
+      console.log(`Сервер доступен на порту ${PORT}`);
+    });
 })();

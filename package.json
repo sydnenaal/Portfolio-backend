@@ -21,8 +21,8 @@
   "_moduleAliases": {
     "@root": ".",
     "@constants": "src/constants",
-    "@api": "src/api",
-    "@static": "src/static",
+    "@controllers": "src/controllers",
+    "@database": "src/database",
     "@utils": "src/utils"
   }
 }
