@@ -3,6 +3,13 @@ const STATIC = "/*";
 /* Auth */
 const AUTH = "/auth";
 
+/* Visits */
+const INCREMENT_VISITS = "/statistic";
+
+/* Contacts */
+const CONTACTS_LIST = "/contacts";
+const CONTACTS_SET = "/contacts/set";
+
 /* Messages */
 const MESSAGES_LIST = "/messages";
 const MESSAGES_MESSAGE = "/messages/message";
@@ -34,4 +41,7 @@ module.exports = {
   PROJECTS_DEL,
   PROJECTS_CREATE,
   MAIN_PAGE_INFO,
+  CONTACTS_LIST,
+  CONTACTS_SET,
+  INCREMENT_VISITS,
 };

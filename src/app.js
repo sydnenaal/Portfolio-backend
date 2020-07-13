@@ -23,7 +23,8 @@ const {
     DATABASE_CONFIG
   );
 
-  const apiRouter = controllers.getApiRouter(database);
+  const secureApiRouter = controllers.getSecureApiRouter(database);
+  const publicApiRouter = controllers.getPublicApiRouter(database);
   const authRouter = controllers.getAuthRouter(database);
   const staticRouter = controllers.getStaticRouter();
 
@@ -32,7 +33,8 @@ const {
     .use(cors())
     .use(bodyParser.json())
     .use(morgan(":method :url :status :response-time ms"))
-    .use("/api", apiRouter)
+    .use("/api/secure", secureApiRouter)
+    .use("/api/public", publicApiRouter)
     .use("/auth", authRouter)
     .use("/", staticRouter)
     .listen(PORT, () => {
