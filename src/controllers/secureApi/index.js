@@ -10,6 +10,7 @@ const getSecureApiRouter = (db) => {
 
     router
       .use(checkTokenExist)
+      .patch(ROUTES.CONTACTS_LIST, Services.getContactsService(db))
       .patch(ROUTES.CONTACTS_SET, Services.setContactsService(db))
       .get(ROUTES.MAIN_PAGE_INFO, Services.mainPageInfoService(db))
       .get(ROUTES.MESSAGES_LIST, Services.messagesService(db))
@@ -17,7 +18,9 @@ const getSecureApiRouter = (db) => {
       .post(ROUTES.MESSAGES_PRIORITY, Services.setPriorityService(db))
       .post(ROUTES.MESSAGES_ACTUALITY, Services.setActualityService(db))
       .post(ROUTES.USERS_PASSWORD, Services.passwordChangeService(db))
+      .post(ROUTES.USERS_USERNAME, Services.usernameChangeService(db))
       .get(ROUTES.USERS_USER, Services.userDataService(db))
+      .post(ROUTES.USERS_PHOTO, Services.userPhotoChangeService(db))
       .get(ROUTES.PROJECTS_LIST, Services.projectsService(db))
       .put(ROUTES.PROJECTS_CREATE, Services.createProjectService(db))
       .delete(ROUTES.PROJECTS_DEL, Services.deleteProjectService(db));

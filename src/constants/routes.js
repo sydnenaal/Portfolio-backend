@@ -18,7 +18,9 @@ const MESSAGES_ACTUALITY = "/messages/actuality";
 
 /* Users */
 const USERS_PASSWORD = "/users/setPassword";
+const USERS_USERNAME = "/users/setUsername";
 const USERS_USER = "/users/getUserData";
+const USERS_PHOTO = "/users/setPhoto";
 
 /* Projects */
 const PROJECTS_LIST = "/projects";
@@ -36,10 +38,12 @@ module.exports = {
   MESSAGES_PRIORITY,
   MESSAGES_ACTUALITY,
   USERS_PASSWORD,
+  USERS_USERNAME,
   USERS_USER,
   PROJECTS_LIST,
   PROJECTS_DEL,
   PROJECTS_CREATE,
+  USERS_PHOTO,
   MAIN_PAGE_INFO,
   CONTACTS_LIST,
   CONTACTS_SET,
