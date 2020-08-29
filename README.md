@@ -3,10 +3,10 @@
 ### Запуск проекта
 
   Для запуска проекта:
-    ### `yarn start`
+### `yarn start`
 
   Для запуска с помощью nodemon:
-    ### `yarn dev`
+### `yarn dev`
 
 
 Деплой проекта на Heroku: https://portfolio-face.herokuapp.com/
